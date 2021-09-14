@@ -11,9 +11,9 @@ package selenium.keyword.common;
 public class Constants {
 	
 	public static String JjinUrl="https://juejin.cn/";
-	public static String lemonUrl = "http://8.129.91.152:8765";
-	public static String userName = "15660919372";
-	public static String passwd = "hui123456";
+	public static String lemonUrl = "http://8.139.91.122:8765";
+	public static String userName = "15662319372";
+	public static String passwd = "hui121356";
 	// 定义基本路径
 	public static String baseUrl = System.getProperty("user.dir");
 	// 定义驱动路径
