@@ -1,173 +1,238 @@
-### 采用Selenium工具设计UI自动化测试框架
+# Selenium Keyword-Driven Automation Framework
+
+> 基于 Selenium 的关键字驱动 UI 自动化测试框架，结合 PageFactory 模式实现高效、可维护的自动化测试。
+
+## 📋 项目概述
+
+本框架采用**关键字驱动**与**PageFactory**两种设计模式相结合的方式，实现了一套灵活、可扩展的 UI 自动化测试解决方案。
+
+### 核心特性
+
+| 特性 | 描述 |
+|------|------|
+| **关键字驱动** | 通过 Excel 配置测试用例，无需编码即可扩展测试场景 |
+| **PageFactory模式** | 基于注解的页面元素管理，提高代码复用性 |
+| **反射机制** | 动态调用关键字方法，实现灵活的测试执行 |
+| **ExtentReports** | 丰富的测试报告生成，支持 HTML 格式 |
+| **自动截图** | 测试失败时自动捕获屏幕截图 |
+| **日志记录** | 基于 Log4j 的详细日志记录 |
+
+## 🏗️ 技术栈
+
+- **语言**: Java 8+
+- **测试框架**: TestNG
+- **自动化工具**: Selenium WebDriver 3.141.59
+- **报告工具**: ExtentReports 3.0.6
+- **Excel处理**: Apache POI 3.17
+- **日志框架**: Log4j 1.2.17
+
+## 📁 项目结构
+
 ```
-众所周知：在UI自动化测试框架方面，有多种设计模式；而其中PO模式为线上测试培训机构所推崇；
-第一它真的非常实用，尤其对于自身编码能力的提升及思想扩展，乃至于PageFactory模式用起来得心应手；
-第二它真的非常简单，培训不需要对它有过多的解释，只要有代码基础，能理解对象和封装，基本就可以跑起来；
-第三说是企业级，实则是小创业型团队，所以建议是能用、会用；即能通过面试，基本就可以抛弃UI自动化，拥抱接口自动化。
+selenium_keyword_pageFactory/
+├── src/
+│   ├── main/java/
+│   │   ├── selenium/
+│   │   │   ├── keyword/
+│   │   │   │   ├── Kwds/           # 关键字驱动实现
+│   │   │   │   │   └── KeywordsDriven.java
+│   │   │   │   ├── common/         # 通用引擎
+│   │   │   │   │   ├── Common_Engine.java
+│   │   │   │   │   ├── Constants.java
+│   │   │   │   │   └── Screenshots.java
+│   │   │   │   ├── extenreports/   # 报告扩展
+│   │   │   │   ├── starter/        # 启动引擎
+│   │   │   │   │   └── StartEngine.java
+│   │   │   │   └── utility/        # 工具类
+│   │   │   └── pom/
+│   │   │       └── pageObjects/    # 页面对象
+│   ├── main/resources/             # 资源文件
+│   ├── test/java/                  # 测试用例
+│   └── test/resources/             # 测试数据
+├── drivers/                        # WebDriver 驱动
+├── testSuits/                      # TestNG 测试套件配置
+├── Log/                            # 日志输出目录
+└── pom.xml                         # Maven 配置
 ```
-- 既然说到UI自动化测试框架的设计方式，那么来浅谈一下：
-#### PO模式
+
+## 🚀 快速开始
+
+### 环境要求
+
+- JDK 1.8+
+- Maven 3.6+
+- Chrome Browser (推荐)
+
+### 安装步骤
+
+1. **克隆项目**
+   ```bash
+   git clone https://github.com/joe-qai/selenium-keyword-framework.git
+   cd selenium_keyword_pageFactory
+   ```
+
+2. **构建项目**
+   ```bash
+   mvn clean compile
+   ```
+
+3. **运行测试**
+   ```bash
+   mvn test
+   ```
+
+## 📊 使用方法
+
+### 1. 配置测试数据
+
+编辑 `src/test/resources/dataEngine.xlsx` 文件：
+
+| 步骤 | 关键字 | 元素定位 | 值 |
+|------|--------|----------|----|
+| 1 | OpenBrowser | - | - |
+| 2 | Navigate | - | https://example.com |
+| 3 | Input | id;username | testuser |
+| 4 | Input | id;password | password123 |
+| 5 | Click | id;loginBtn | - |
+| 6 | CloseBrowser | - | - |
+
+### 2. 关键字语法
+
+元素定位采用 `定位方式;元素值` 的格式：
+
 ```
-这里就不过多解释，通俗点讲：就是将测试脚本和页面元素及操作方法分离；
-po思想：结构分层，测试脚本即业务逻辑层，就是测试用例，调用对象库(Page Object)，测试业务流程；
-页面元素和操作方法就是页面对象，即对象逻辑层；这里有必要再分一下：对象层即元素对应一个操作方法；而逻辑层即操作方法的集合<组装操作方法成一个流程>；
-有些说法还有一层，有些用例需要用到多组数据，随即将数据抽出，变成数据层。
+id;elementId              // 通过 ID 定位
+xpath;//div[@class='test'] // 通过 XPath 定位
+css;.className            // 通过 CSS 选择器定位
+name;elementName          // 通过 name 属性定位
+linktext;LinkText         // 通过链接文本定位
+partiallinktext;Partial   // 通过部分链接文本定位
+tagname;div               // 通过标签名定位
+classname;className       // 通过类名定位
 ```
-- po优势：效率高、复用性高；
+
+### 3. 支持的关键字
+
+| 关键字 | 描述 | 参数 |
+|--------|------|------|
+| `OpenBrowser` | 打开浏览器 | - |
+| `Navigate` | 导航到URL | URL地址 |
+| `Click` | 点击元素 | 元素定位 |
+| `Input` | 输入文本 | 元素定位, 输入值 |
+| `CloseBrowser` | 关闭浏览器 | - |
+| `WaitMoment` | 等待指定时间 | 毫秒数 |
+| `JScriptExcuteClick` | JavaScript 执行点击 | 元素定位 |
+
+### 4. 运行测试套件
+
+```bash
+# 通过 TestNG XML 运行
+mvn test -DsuiteXmlFile=testSuits/test.xml
+
+# 运行特定测试类
+mvn test -Dtest=testIndex
 ```
-怎样理解优势：也就是在业务逻辑不变的情况下，只需要关注对象库即元素是否发生改变，否则只需要继续堆砌测试用例即可；
-代码复用性高，这更好理解，无非就是在不同测试用例的情况下，使用到了同一个操作步骤，那么就达到了提升代码复用性的目的。
+
+## 🔧 框架架构
+
 ```
-- PageFactory模式是po模式的补充，其中使用到更多的是注解；代码中没有findElement等方法，全靠PageFactory.initElements()初始化；然后动态代理和反射调用。
+┌─────────────────────────────────────────────────────────────────┐
+│                      测试执行流程                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────────┐  │
+│  │  Excel数据源  │───>│  StartEngine │───>│  Common_Engine   │  │
+│  │  (Test Data) │    │  (启动引擎)   │    │  (反射执行引擎)   │  │
+│  └──────────────┘    └──────────────┘    └────────┬─────────┘  │
+│                                                   │             │
+│                                                   ▼             │
+│                                        ┌──────────────────┐    │
+│                                        │  KeywordsDriven  │    │
+│                                        │  (关键字实现层)   │    │
+│                                        └────────┬─────────┘    │
+│                                                   │             │
+│                                                   ▼             │
+│                                        ┌──────────────────┐    │
+│                                        │   Selenium API   │    │
+│                                        │   (浏览器驱动)    │    │
+│                                        └──────────────────┘    │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  报告输出                                                 │   │
+│  │  ├─ ExtentReports (HTML)                                 │   │
+│  │  ├─ Log4j (日志文件)                                      │   │
+│  │  └─ Excel (结果回写)                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## 📝 PageFactory 模式示例
+
 ```java
-/**
- * 
- * TODO:基于PageFactory模式设计对象库
- *
- * @author Joe-Tester
- * @time 2021年9月8日
- * @file SearchPageFactory.java
- */
-public class SearchPageFactory {
-
-	WebDriver driver;
-	
-	/**
-	 * 构造方法
-	 * @param driver
-	 */
-	public SearchPageFactory(WebDriver driver) {
-		this.driver = driver;
-		PageFactory.initElements(driver, this);
-	}
-
-	@FindBy(id = "tab-flight-tab-hp")
-	@CacheLookup
-	WebElement fightTab;
-
-	@FindBy(id = "flight-type-roundtrip-label")
-	WebElement roundTrip;
-
-	@FindBy(id = "flight-type-multi-dest-label")
-	WebElement multipleDestination;
-
-	@FindBy(xpath = "//*[@id='gcw-flights-form-hp-flight']/div[3]/div[1]/div/div[1]/label/input")
-	WebElement origin;
-
-	@FindBy(xpath = "//*[@id='flight-destination-hp-flight']")
-	WebElement destination;
-
-	@FindBy(id = "flight-departing-hp-flight")
-	WebElement departure;
-
-	@FindBy(id = "flight-returning-wrapper-hp-flight")
-	WebElement returning;
-
-	@FindBy(xpath = "//button/span[@class='icon icon-close']")
-	WebElement closeIcon;
-
-	@FindBy(xpath = "//*[@id='gcw-flights-form-hp-flight']/div[8]/label/button")
-	WebElement searchButton;
-
-	@FindBy(xpath = "//button[@class='datepicker-close-btn close btn-text']")
-	WebElement closeCalIcon;
-
-	/***
-	 * Click Fight Tab
-	 */
-	public void clickFightTab() {
-		fightTab.click();
-	}
-
-	/***
-	 * Click Round Trip
-	 */
-	public void clickRoundTrip() {
-		roundTrip.click();
-	}
-
-	/***
-	 * Click Multiple Destination
-	 */
-	public void clickMultipleDestination() {
-		multipleDestination.click();
-	}
-
-	/***
-	 * Click Close Icon
-	 */
-	public void clickCloseIcon() {
-		closeIcon.click();
-	}
-
-	/***
-	 * Set Origin City
-	 * 
-	 * @param originCity
-	 */
-	public void setOriginCity(String originCity) {
-		origin.sendKeys(originCity);
-	}
-
-	/***
-	 * Set Destination City
-	 * 
-	 * @param destinationCity
-	 */
-	public void setDestinationCity(String destinationCity) {
-		destination.sendKeys(destinationCity);
-	}
-
-	/***
-	 * Set Departure Date
-	 * 
-	 * @param departureDate
-	 */
-	public void setDeaprtureDate(String departureDate) {
-		departure.sendKeys(departureDate);
-	}
-
-	public void setReturnDate(String returnDate) {
-		returning.sendKeys(returnDate);
-	}
-
-	/***
-	 * Click Search Button
-	 */
-	public void clickSearchButton() {
-		searchButton.click();
-	}
-
-	/***
-	 * Click Calendar Menu close icon
-	 */
-	public void clickCalendar() {
-		closeCalIcon.click();
-	}
-
-	/**
-	 * closing the browser
-	 */
-	public void quit() {
-		driver.quit();
-	}
+public class LoginPage {
+    
+    WebDriver driver;
+    
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+    
+    @FindBy(id = "username")
+    @CacheLookup
+    WebElement usernameInput;
+    
+    @FindBy(id = "password")
+    WebElement passwordInput;
+    
+    @FindBy(id = "login-btn")
+    WebElement loginButton;
+    
+    public void login(String username, String password) {
+        usernameInput.sendKeys(username);
+        passwordInput.sendKeys(password);
+        loginButton.click();
+    }
 }
 ```
-#### 关键字框架设计
-```
-这套框架里面，使用的关键技术就是反射，原理就是在程序运行中，从excel中读取关键字，然后通过反射去关键字类调用该方法。
-在实际应用中，也有几层意思：
-1、excel外部文件介质，存储关键字和页面元素；
-2、程序设计PageObject实际文件存放页面元素；
-3、程序内部实现对页面元素的操作方法供反射调用；
-算是po与关键字框架的结合：参考![关键字框架设计源码](https://gitee.com/hellotester/SeleniumKeywordDrive/tree/master)
-```
-##### PO+关键字
-```
-这套组合需要维护两个地方，一是业务逻辑发生改变了就去维护excel、二是页面元素发生改变了再去修改页面元素；
-```
-##### 纯关键字框架
-```
-如此设计有一个目的：就是所有数据、页面元素、对象库都只维护一份excel、并且易于扩展集成web平台；
-那么唯一出现的问题就是不方便调试，或者说缺少啥关键字就去开发某关键字即可。
-```
+
+## 📈 报告输出
+
+测试完成后，报告将生成在以下位置：
+- **HTML 报告**: `target/extent-report.html`
+- **日志文件**: `Log/serverDebug.log`
+- **结果 Excel**: `src/test/resources/dataEngine.xlsx` (已更新)
+
+## 🤝 贡献指南
+
+欢迎提交 Issue 和 Pull Request！
+
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/your-feature`)
+3. 提交更改 (`git commit -am 'Add some feature'`)
+4. 推送到分支 (`git push origin feature/your-feature`)
+5. 创建 Pull Request
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 详见 `LICENSE` 文件
+
+## 📧 联系方式
+
+如有问题或建议，请通过以下方式联系：
+- 邮箱: joe-tester@example.com
+- GitHub: [@Joe-Tester](https://github.com/Joe-Tester)
+
+---
+
+*Powered by Selenium WebDriver & TestNG*
+
+---
+
+## 更新日志
+
+### v0.0.1 (2021-09-08)
+- 初始版本发布
+- 支持关键字驱动测试
+- 集成 PageFactory 模式
+- 支持 ExtentReports 报告生成
